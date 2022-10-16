@@ -23,8 +23,12 @@ app.post('/', async function requestHandler(req, res) {
 	try{
 
 
-	const {formattedAmount, url, post_id, monetization} = req.body
+	const {formattedAmount,paymentPointer, title, url, post_id, monetization} = req.body
 
+	 if(!paymentPointer){
+            res.status(405).send({ message: 'Payment pointer is required!' })
+            return
+        }
 	if(!url){
             res.status(405).send({ message: 'Url is required!' })
             return
@@ -67,7 +71,8 @@ console.log(formattedAmount)
                             wm_session:monetization.requestId, 
                             wm_data:monetization,
                             payment_pointer:monetization.paymentPointer,
-			   currency:monetization.assetCode
+			   currency:monetization.assetCode,
+			   title:title
                         },
                     ])
                     if(data){
@@ -88,7 +93,8 @@ console.log(formattedAmount)
                         formatted_amount:newFormattedAmount.toString(), 
                         wm_session:monetization.requestId, 
                         wm_data:monetization,
-                        updated_at:((new Date()).toISOString()).toLocaleString()
+                        updated_at:((new Date()).toISOString()).toLocaleString(),
+			title:title
                     })
                     .eq('id', record[0].id)
                     if(data){
